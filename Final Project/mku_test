@@ -1,0 +1,28 @@
+#!/bin/bash
+
+if [ $# \< 1 ]; then echo Usage: mku filename; exit; fi
+
+# default partiton = 1
+if [ $# \> 1 ]; then PARTITION=$2; fi
+
+# VDISK=vdisk
+# SECTOR=$(ptable vdisk 1)
+# OFFSET=$(expr $(ptable vdisk 1) \* 512)
+
+echo partition=1 sector=$(ptable vdisk 1) offset=$(expr $(ptable vdisk 1) \* 512)
+mount -o loop,offset=$(expr $(ptable vdisk 1) \* 512) vdisk /mnt
+
+echo compiling lowertoupper.c .....
+as86 -o u.o u.s
+bcc -c -ansi lowertoupper.c
+
+echo linking .......
+ld86 u.o lowertoupper.o mtxlib /usr/lib/bcc/libc.a 2> /dev/null 
+
+echo copying lowertoupper into vdisk/bin/lowertoupper
+
+cp -av a.out /mnt/bin/lowertoupper
+umount /mnt
+
+echo done lowertoupper
+echo ------------------------------------

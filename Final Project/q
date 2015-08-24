@@ -1,0 +1,30 @@
+#!/bin/bash
+
+SERIAL1=6
+SERIAL2=7
+PRINTER=13
+
+echo Copying vdisk...
+cp vdiskMed vdisk
+
+
+
+mku login
+mku cp
+mku gabe
+
+mku init
+mku l2u
+mku cat
+mku grep
+mku sh
+mku more
+
+
+
+
+qemu-system-i386 -hda vdisk -m 520m -smp 9 -serial /dev/pts/$SERIAL1 -serial /dev/pts/$SERIAL2 \
+-parallel /dev/pts/$PRINTER -localtime -cdrom MTXinstallCD.iso #-boot d
+
+
+rm *.o *.out

@@ -1,0 +1,44 @@
+#!/bin/bash
+
+echo removing ......
+rm *.o
+rm *.out
+rm *~
+echo copying mtximage ......
+rm mtximage
+cp mtximage_copy mtximage
+
+
+echo compiling...
+as86 -o  ts.o  ts.s
+bcc  -c -ansi  t.c
+
+
+echo linking...
+ld86 -d ts.o t.o mtxlib /usr/lib/bcc/libc.a
+
+
+echo mounting...
+mount -o loop mtximage /mnt
+echo cp a.out to mtximage/boot/mtx
+cp a.out /mnt/boot/mtx
+umount /mnt
+
+
+echo done
+
+##########  Use YOUR MTX booter of LAB#1 to boot up MTX ##########
+# echo comiling ......
+# as86 -o bs.o bs.s
+# bcc -c -ansi main.c
+
+# echo linking .......
+# ld86 -d ts.o main.o /usr/lib/bcc/libc.a
+# echo check a.out size
+# ls -l a.out
+
+# echo dump a.out to a VIRTUAL FD
+# dd if=a.out of=mtximage bs=1024 count=1 conv=notrunc
+#################################################################
+
+qemu-system-i386 -fda mtximage -no-fd-bootchk

@@ -1,0 +1,22 @@
+VFD=mtximage
+
+echo copying mtximage...
+cp mtximage_copy mtximage
+
+echo compiling .....
+bcc -c -ansi t.c
+as86 -o ts.o ts.s
+
+echo linking .......
+ld86 -o mtx -d ts.o t.o mtxlib /usr/lib/bcc/libc.a
+
+mount -o loop $VFD /mnt
+cp mtx /mnt/boot
+umount /mnt
+
+(cd USER; mku u1; mku u2)
+
+rm *.o 
+echo done
+
+qemu-system-i386 -fda mtximage -no-fd-bootchk -serial /dev/pts/5 -serial /dev/pts/10
